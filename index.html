@@ -6,7 +6,6 @@
 <title>FinnWeather+ — Mô hình dự báo đa mô hình cho Việt Nam</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-<!-- Feather icons (external, professional) -->
 <script src="https://unpkg.com/feather-icons"></script>
 
 <style>
@@ -54,7 +53,7 @@
   }
   .hdr-ic{display:inline-flex; width:18px; height:18px; opacity:.9}
 
-  /* ===== Header (fixed theme switch inside) ===== */
+  /* ===== Header (switch nằm trong header) ===== */
   header{
     padding:18px 20px;border-bottom:1px solid var(--stroke);
     background:linear-gradient(180deg, rgba(122,255,222,.25), rgba(255,255,255,0));
@@ -78,7 +77,6 @@
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .meta{color:var(--muted);font-size:12px}
 
-  /* Buttons & chips (liquid) */
   .btn{
     background:linear-gradient(180deg, rgba(122,255,222,.7), rgba(90,162,255,.7));
     color:#082037;border:1px solid rgba(255,255,255,.8); border-radius:14px;padding:10px 14px;font-weight:700;cursor:pointer;
@@ -115,7 +113,6 @@
       radial-gradient(120% 80% at 100% -20%, rgba(90,162,255,.10), transparent 45%),
       linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.10));
   }
-  /* Leaflet controls -> glass */
   .leaflet-control{background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.25)) !important;
     border:1px solid var(--stroke) !important; border-radius:12px !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
   .leaflet-bar a{background:transparent !important; color:#10224a !important; border-bottom:1px solid var(--stroke) !important}
@@ -135,15 +132,9 @@
   [data-theme="dark"] .tab{background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); color:#dbe6ff}
   [data-theme="dark"] .tab.active{color:#0a1022}
 
-  /* ===== Tab panes show/hide ===== */
   .tabpanes > div{ display:none; padding:12px 14px; }
   .tabpanes > div.active{ display:block; }
-  #pane-daily .body{ padding:0; } /* giữ layout bảng gọn */
 
-  /* ===== Charts ===== */
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{border-bottom:1px solid var(--stroke);padding:10px;text-align:left;vertical-align:middle}
-  th{color:var(--txt);font-weight:600}
   canvas{
     background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.25));
     border:1px solid var(--stroke);border-radius:12px;padding:6px;
@@ -154,7 +145,7 @@
     box-shadow:inset 0 .8px 0 rgba(255,255,255,.45), inset 0 -1.2px 0 rgba(0,0,0,.25)
   }
 
-  /* ===== Radar timeline chips ===== */
+  /* ===== Radar timeline ===== */
   #timelineWrap{padding:8px 10px;border-top:1px solid var(--stroke);background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.2))}
   [data-theme="dark"] #timelineWrap{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02))}
   #timelineHead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
@@ -176,7 +167,7 @@
     border:1px solid var(--stroke); box-shadow:inset 0 1px 0 rgba(255,255,255,.85)}
   [data-theme="dark"] .model{background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03))}
 
-  /* ===== Liquid weather icons ===== */
+  /* ===== Liquid icons ===== */
   .liquid-icon{display:inline-flex;align-items:center;justify-content:center;
     width:28px;height:28px;border-radius:10px; border:1px solid rgba(10,20,40,.12);
     background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.25));
@@ -185,13 +176,49 @@
   [data-theme="dark"] .liquid-icon{ border-color:rgba(255,255,255,.35); background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06)); box-shadow:0 6px 16px rgba(90,162,255,.20), inset 0 1px 0 rgba(255,255,255,.5)}
   .liquid-icon svg{display:block}
 
-  /* Align the daily weather cell perfectly center (icon + label) */
-  .wx{display:flex; align-items:center; gap:8px}
-  .wx.center{justify-content:center}
-  .wx .liquid-icon{flex:0 0 auto}
-  .wx span{display:inline-block; line-height:1.2; white-space:nowrap}
+  /* ===== iOS-like 5-day list ===== */
+  .daily-list{
+    display:flex; flex-direction:column; gap:6px;
+    padding:6px 8px;
+    border-top:1px solid var(--stroke);
+    border-bottom:1px solid var(--stroke);
+    border-radius:12px;
+    background:linear-gradient(180deg, var(--bg1), var(--bg2));
+  }
+  .day-row{
+    display:grid;
+    grid-template-columns: 90px 50px 34px 1fr 38px; /* Day | Icon+POP | Min | Range | Max */
+    align-items:center; gap:10px;
+    padding:10px 6px;
+    border-bottom:1px solid var(--stroke);
+  }
+  .day-row:last-child{ border-bottom:none; }
+  .day-name{ font-weight:600; }
+  .day-row.today .day-name{ font-weight:800; }
+  .wx-stack{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .wx-stack .pop{ font-size:12px; font-weight:800; color:#35b6ff; letter-spacing:.2px; }
+  [data-theme="dark"] .wx-stack .pop{ color:#7fd3ff; }
+  .temp-min,.temp-max{ font-weight:700; }
+  .range{ position:relative; height:8px; }
+  .range .track{
+    position:absolute; inset:0; border-radius:999px;
+    background:linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.06));
+  }
+  [data-theme="dark"] .range .track{
+    background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+  }
+  .range .fill{
+    position:absolute; top:0; height:8px; border-radius:999px;
+    background:linear-gradient(180deg,#ffb020,#ff7a00);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+  }
+  .range .dot{
+    position:absolute; top:-4px; width:14px; height:14px; border-radius:50%;
+    background:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.7);
+  }
+  [data-theme="dark"] .range .dot{ background:#eaf1ff; box-shadow:0 0 0 2px rgba(10,15,30,.6); }
 
-  /* ==================== Splash overlay ==================== */
+  /* ===== Splash overlay ===== */
   #splash{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px;
     color:#0c1322; text-align:center; z-index:9999; transition:opacity .35s ease;
     background:
@@ -200,8 +227,7 @@
     backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%);
     border-bottom:1px solid var(--stroke)}
   [data-theme="dark"] #splash{ color:#e9eef8; background:radial-gradient(1200px 480px at 50% -20%, rgba(122,255,222,.22), rgba(90,162,255,.12) 40%, rgba(10,13,20,1) 70%), linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); }
-
-  /* ===== Moving gradient title ===== */
+  #splash.hide{opacity:0; pointer-events:none;}
   #splash .title{
     font-size:40px; font-weight:900; letter-spacing:.4px;
     background: linear-gradient(90deg, #0a2448, #1a66ff, #7affde, #0a2448);
@@ -215,17 +241,20 @@
     background-size: 300% 100%;
     animation: titleGradient 6s linear infinite;
   }
-  @keyframes titleGradient{
-    0%{ background-position: 0% 50%; }
-    100%{ background-position: 100% 50%; }
-  }
+  @keyframes titleGradient{0%{ background-position: 0% 50%; }100%{ background-position: 100% 50%; }}
   #splash .subtitle{color:#27407a; font-size:15px}
   [data-theme="dark"] #splash .subtitle{ color:#cfe1ff }
   .dots::after{content:""; display:inline-block; width:1.5em; text-align:left; animation:dots 1.2s steps(4,end) infinite}
   @keyframes dots { 0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."} 100%{content:""} }
-  #splash.hide{opacity:0; pointer-events:none;}
 
-  /* ===== Theme switch (now inside header, not fixed) ===== */
+  /* nhỏ gọn di động */
+  @media (max-width: 520px){
+    header{ flex-direction:column; align-items:flex-start; }
+    .hdr-actions{ width:100%; display:flex; justify-content:flex-end; }
+    .day-row{ grid-template-columns: 74px 46px 30px 1fr 34px; gap:8px; }
+  }
+
+  /* ===== Theme switch (trong header) ===== */
   #themeSwitch{
     position:static; z-index:auto;
     display:flex; align-items:center; gap:8px; padding:6px 10px;
@@ -237,7 +266,7 @@
   .tgl{position:relative; width:42px; height:22px; cursor:pointer; display:inline-block}
   .tgl input{display:none}
   .tgl .track{
-    position:absolute; inset:0; background:rgba(0,0,0,.18); border:1px solid var(--stroke); border-radius:999px; transition:.25s;
+    position:absolute; inset:0; border:1px solid var(--stroke); border-radius:999px; transition:.25s;
     background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.35));
   }
   [data-theme="dark"] .tgl .track{ background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06)); }
@@ -247,58 +276,11 @@
     transition:.25s;
   }
   .tgl input:checked ~ .thumb{ transform:translateX(20px) }
-
-  /* ===== Responsive 5-day table ===== */
-  .table-scroll{
-    width:100%;
-    overflow:auto; -webkit-overflow-scrolling:touch;
-    border-top:1px solid var(--stroke);
-    border-bottom:1px solid var(--stroke);
-    border-radius:12px;
-    background:linear-gradient(180deg, var(--bg1), var(--bg2));
-  }
-  #dailyTable{
-    width:100%;
-    min-width: 620px;                    /* đảm bảo không vỡ bố cục, có thể cuộn */
-    border-collapse:collapse;
-    font-size: clamp(12px, 1.1vw, 14px); /* co giãn theo màn hình */
-  }
-  #dailyTable th, #dailyTable td{
-    padding: clamp(8px, 1.2vw, 12px) clamp(8px, 1vw, 10px);
-  }
-  /* canh giữa các cột số / độ tin cậy */
-  #dailyTable th:nth-child(3),
-  #dailyTable th:nth-child(4),
-  #dailyTable th:nth-child(5),
-  #dailyTable th:nth-child(6),
-  #dailyTable td:nth-child(3),
-  #dailyTable td:nth-child(4),
-  #dailyTable td:nth-child(5),
-  #dailyTable td:nth-child(6){ text-align:center; }
-
-  /* header sticky trong khung cuộn */
-  .table-scroll thead th{
-    position: sticky; top: 0; z-index: 1;
-    background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.55));
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-  }
-  [data-theme="dark"] .table-scroll thead th{
-    background: linear-gradient(180deg, rgba(15,20,35,.65), rgba(15,20,35,.45));
-  }
-
-  /* tối ưu rất nhỏ cho màn hình hẹp */
-  @media (max-width: 520px){
-    header{ flex-direction:column; align-items:flex-start; }
-    .hdr-actions{ width:100%; display:flex; justify-content:flex-end; }
-    #dailyTable{ min-width: 540px; }
-    .wx span{ font-size: .98em; }
-  }
 </style>
 </head>
 <body>
 
-<!-- Splash Overlay -->
+<!-- Splash -->
 <div id="splash" class="glass">
   <div class="title">FinnWeather+</div>
   <div class="subtitle">Đang tải và tối ưu hoá mô hình dự báo <span class="dots"></span></div>
@@ -314,7 +296,7 @@
   </div>
 
   <div class="hdr-actions">
-    <!-- Theme switch (no emoji) — now inside header -->
+    <!-- Theme switch trong header -->
     <div id="themeSwitch" class="glass">
       <span class="meta">Sáng</span>
       <label class="tgl">
@@ -344,7 +326,7 @@
         <label for="satToggle" class="meta" style="display:flex;align-items:center;gap:6px"><i data-feather="image" class="fi"></i> Himawari IR (NASA GIBS)</label>
         <input type="checkbox" id="radarToggle" />
         <label for="radarToggle" class="meta" style="display:flex;align-items:center;gap:6px"><i data-feather="activity" class="fi"></i> Radar mưa (RainViewer)</label>
-        <button class="btn" id="radarPlay" disabled><span class="fi"><i data-feather="play"></i></span> Phát radar</button>
+        <button class="btn" id="radarPlay" disabled><span class="fi"><i data-feather="play"></i></span> Phát/Ngừng radar</button>
         <span class="chip" id="radarStatus">Radar: tắt</span>
         <span class="chip" id="radarTime">–</span>
       </div>
@@ -354,13 +336,11 @@
         <span class="chip" id="tcStatus">Bão: tắt</span>
       </div>
 
-      <!-- Map wrapper with tint glass overlay -->
       <div id="mapWrap">
         <div id="map"></div>
         <div class="mapTint"></div>
       </div>
 
-      <!-- Radar timeline -->
       <div id="timelineWrap">
         <div id="timelineHead" class="meta">
           <span style="display:inline-flex;align-items:center;gap:6px"><i data-feather="clock" class="fi"></i> Mốc thời gian:</span>
@@ -407,24 +387,11 @@
         <div style="height:10px"></div>
         <canvas id="windChart" height="160"></canvas>
       </div>
+
+      <!-- 5-day iOS-like -->
       <div id="pane-daily">
         <div class="body" style="padding-top:0">
-          <!-- Khung cuộn responsive -->
-          <div class="table-scroll">
-            <table id="dailyTable">
-              <thead>
-                <tr>
-                  <th>Ngày</th>
-                  <th>Dự báo</th>
-                  <th>Nhiệt độ (°C)</th>
-                  <th>Lượng mưa (mm)</th>
-                  <th>Gió TB (m/s)</th>
-                  <th>Độ chính xác</th>
-                </tr>
-              </thead>
-              <tbody><tr><td colspan="6" class="meta">Chưa có dữ liệu.</td></tr></tbody>
-            </table>
-          </div>
+          <div class="daily-list" id="dailyList"></div>
         </div>
       </div>
     </div>
@@ -433,7 +400,6 @@
   </div>
 </div>
 
-<!-- libs -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -442,60 +408,40 @@
 /* =============== Splash control =============== */
 window.addEventListener('load', ()=>{ setTimeout(()=> document.getElementById('splash').classList.add('hide'), 2000); });
 
-/* Feather render helper (re-run after dynamic HTML updates) */
 function refreshFeather(){ try{ feather.replace(); }catch(_){} }
 refreshFeather();
 
-/* =============== Helpers =============== */
+/* Helpers */
 window.addEventListener('error', e => console.warn('GlobalError:', e.message));
 const safeJSON = async (res) => { try { return await res.json(); } catch { return {}; } };
 const toMs = (t) => (typeof t === 'string') ? new Date(t).getTime() : t;
 const HOUR = 3600 * 1000; const hourBin = (ms) => Math.floor(ms / HOUR);
 
-/* =============== Map base (Light/Dark tiles) =============== */
+/* Map */
 const map = L.map('map', { zoomControl:true }).setView([16.0,106.0], 6);
-
-// Light theme tiles (Carto Positron)
-const lightBase = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution:'&copy; OSM & CARTO', subdomains:'abcd', maxZoom:19
-});
-// Dark theme tiles (Carto Dark)
-const darkBase = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution:'&copy; OSM & CARTO', subdomains:'abcd', maxZoom:19
-});
-// add light by default
+const lightBase = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {attribution:'&copy; OSM & CARTO', subdomains:'abcd', maxZoom:19});
+const darkBase = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {attribution:'&copy; OSM & CARTO', subdomains:'abcd', maxZoom:19});
 lightBase.addTo(map);
 
-// Himawari (NASA GIBS)
 function gibsLayer({layer='Himawari_AHI_Band13_Clean_Infrared_Day', time='default', format='jpg'}){
   const url = `https://gibs-{s}.earthdata.nasa.gov/wmts/epsg3857/best/${layer}/default/${time}/GoogleMapsCompatible/{z}/{y}/{x}.${format}`;
   return L.tileLayer(url, {subdomains:['a','b','c'], opacity:0.7, attribution:'NASA GIBS / Himawari'});
 }
 let satLayer = gibsLayer({}); satLayer.addTo(map);
 
-/* =============== Theme Toggle (now respects initial data-theme) =============== */
+/* Theme toggle in header */
 const html = document.documentElement;
 const modeToggle = document.getElementById('modeToggle');
-
 function setTheme(mode){
   html.setAttribute('data-theme', mode);
-  if(mode==='dark'){
-    if(map.hasLayer(lightBase)) map.removeLayer(lightBase);
-    if(!map.hasLayer(darkBase)) darkBase.addTo(map);
-  }else{
-    if(map.hasLayer(darkBase)) map.removeLayer(darkBase);
-    if(!map.hasLayer(lightBase)) lightBase.addTo(map);
-  }
-  if(modeToggle) modeToggle.checked = (mode === 'dark');
+  if(mode==='dark'){ if(map.hasLayer(lightBase)) map.removeLayer(lightBase); if(!map.hasLayer(darkBase)) darkBase.addTo(map); }
+  else{ if(map.hasLayer(darkBase)) map.removeLayer(darkBase); if(!map.hasLayer(lightBase)) lightBase.addTo(map); }
+  modeToggle.checked = (mode === 'dark');
 }
-
-// set initial from <html data-theme="...">
-const initialMode = html.getAttribute('data-theme') || 'light';
-setTheme(initialMode);
-
+setTheme(html.getAttribute('data-theme') || 'light');
 modeToggle.addEventListener('change',()=> setTheme(modeToggle.checked?'dark':'light'));
 
-/* =============== Radar (RainViewer) =============== */
+/* Radar (RainViewer) */
 let radarFrames = [], radarLayers = [], radarFrame = 0, radarPlaying = false;
 const TIMELINE_WINDOW = 12;
 async function fetchJSON(url){ const r=await fetch(url); if(!r.ok) throw new Error(url+' '+r.status); return r.json(); }
@@ -551,7 +497,7 @@ function buildRadarTimeline(centerIdx){
 }
 loadRadar();
 
-/* =============== Bão/ATNĐ (GDACS, với CORS proxies) =============== */
+/* Cyclone (GDACS) */
 let tcLayer = L.layerGroup(); const tcToggle=document.getElementById('tcToggle'); const tcStatus=document.getElementById('tcStatus');
 const GDACS_LIST='https://www.gdacs.org/gdacsapi/api/events/geteventlist/geojson?eventtype=TC';
 const GDACS_EVENT=(id)=>`https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=${encodeURIComponent(id)}`;
@@ -609,7 +555,7 @@ document.getElementById('satToggle').addEventListener('change', e=> e.target.che
 document.getElementById('radarToggle').addEventListener('change', ()=>{ if(document.getElementById('radarToggle').checked){ if(radarLayers.length) showRadarFrame(radarLayers.length-1); } else { radarLayers.forEach(l=>map.removeLayer(l)); radarPlaying=false; document.getElementById('radarPlay').innerHTML='<span class="fi"><i data-feather="play"></i></span> Phát/Ngừng radar'; refreshFeather(); } updateRadarStatus(); updateRadarTimeLabel(); });
 document.getElementById('radarPlay').addEventListener('click', playRadar);
 
-/* =============== Geolocation & picking =============== */
+/* Geolocation & picking */
 let pointMarker=null,currentLatLng=null;
 const locTag=document.getElementById('locTag'), locMeta=document.getElementById('locMeta'), geoMsg=document.getElementById('geoMsg');
 map.on('click',(e)=>selectLocation(e.latlng.lat,e.latlng.lng,true));
@@ -630,7 +576,7 @@ function selectLocation(lat,lon,recenter=false,fromGPS=false){
   locMeta.textContent='Đang tải dự báo đa nguồn…'; updateForecast(lat,lon);
 }
 
-/* =============== Forecast sources =============== */
+/* Forecast sources */
 async function srcOpenMeteo(lat,lon){ try{
   const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,wind_speed_10m,weathercode&forecast_days=5&timezone=auto`;
   const res=await fetch(url); if(!res.ok) throw new Error('OM HTTP '+res.status); const j=await safeJSON(res); const t=(j.hourly?.time||[]).map(toMs);
@@ -656,7 +602,7 @@ async function srcOpenMeteoModel(lat,lon,modelId){ try{
   return {id:modelId,label:modelId.toUpperCase(),time:t,temp:j.hourly?.temperature_2m||[],rain:j.hourly?.precipitation||[],wind:j.hourly?.wind_speed_10m||[],code:j.hourly?.weathercode||[]};
 }catch(e){ return null; } }
 
-/* chọn model */
+/* Models */
 const CANDIDATES=[{id:'open-meteo',label:'Open-Meteo (ổn định)',solid:true},{id:'metno',label:'MET Norway (ổn định)',solid:true},{id:'gfs_seamless',label:'GFS (O-M thử nghiệm)'},{id:'icon_seamless',label:'ICON (O-M thử nghiệm)'},{id:'gem_global',label:'GEM (O-M thử nghiệm)'}];
 const modelsListEl=document.getElementById('modelsList');
 CANDIDATES.forEach(m=>{ const el=document.createElement('label'); el.className='model'; el.innerHTML=`<input type="checkbox" ${m.solid?'checked':''} data-model="${m.id}"><span>${m.label}</span>`; modelsListEl.appendChild(el); });
@@ -682,7 +628,7 @@ function blendAverageBin(modelsData){
   out.confidence=Math.round((conf(out.band.temp,6)+conf(out.band.rain,6)+conf(out.band.wind,6))/3); return out;
 }
 
-/* Weather labels + LIQUID ICONS */
+/* Icons & labels */
 function codeToLabelVi(code){
   if(code==null) return '—';
   if(code===0) return 'Nắng'; if(code===1||code===2) return 'Ít mây'; if(code===3) return 'Nhiều mây';
@@ -731,45 +677,74 @@ function render(blend){
   tempChart.data.datasets=[...bandDatasets(xs,blend.band.temp,'Dải nhiệt'),lineDataset(xs,blend.avg.temp,'Nhiệt độ (average)')]; tempChart.update();
   rainChart.data.datasets=[...bandDatasets(xs,blend.band.rain,'Dải mưa'),lineDataset(xs,blend.avg.rain,'Mưa (average)')]; rainChart.update();
   windChart.data.datasets=[...bandDatasets(xs,blend.band.wind,'Dải gió'),lineDataset(xs,blend.avg.wind,'Gió (average)')]; windChart.update();
+
   document.getElementById('confScore').textContent=blend.confidence;
   const first=blend.band.temp.slice(0,Math.min(48,blend.band.temp.length)).filter(Boolean);
-  document.getElementById('uncertRange').textContent=first.length?`${Math.min(...first.map(b=>b[0])).toFixed(1)} – ${Math.max(...first.map(b=>b[1])).toFixed(1)}`:'–';
+  const lo = Math.min(...first.map(b => b[0]));
+  const hi = Math.max(...first.map(b => b[1]));
+  document.getElementById('uncertRange').textContent = (isFinite(lo) && isFinite(hi)) ? `${lo.toFixed(1)} – ${hi.toFixed(1)}` : '–';
+
   renderDaily(blend);
 }
 
-/* Daily table (5 ngày) */
+/* Daily iOS-like */
 function startOfLocalDay(ms){ const d=new Date(ms); return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(); }
 function renderDaily(blend){
   const byDay=new Map();
   for(let i=0;i<blend.time.length;i++){
-    const day=startOfLocalDay(blend.time[i]); if(!byDay.has(day)) byDay.set(day,{t:[],r:[],w:[],bt:[],br:[],bw:[],codes:[]});
+    const day=startOfLocalDay(blend.time[i]);
+    if(!byDay.has(day)) byDay.set(day,{t:[], r:[], codes:[]});
     const b=byDay.get(day);
     if(blend.avg.temp[i]!=null) b.t.push(blend.avg.temp[i]);
     if(blend.avg.rain[i]!=null) b.r.push(blend.avg.rain[i]);
-    if(blend.avg.wind[i]!=null) b.w.push(blend.avg.wind[i]);
-    if(blend.band.temp[i]) b.bt.push(blend.band.temp[i]);
-    if(blend.band.rain[i]) b.br.push(blend.band.rain[i]);
-    if(blend.band.wind[i]) b.bw.push(blend.band.wind[i]);
     if(blend.code[i]!=null) b.codes.push(blend.code[i]);
   }
   const days=[...byDay.keys()].sort((a,b)=>a-b).slice(0,5);
-  const tbody=document.querySelector('#dailyTable tbody'); tbody.innerHTML='';
-  if(!days.length){ tbody.innerHTML='<tr><td colspan="6" class="meta">Chưa có dữ liệu.</td></tr>'; return; }
-  const confFromBands=(arr,typ=6)=>{ if(!arr.length) return null; const w=arr.map(x=>Math.max(0,x[1]-x[0])); const avg=w.reduce((a,c)=>a+c,0)/w.length; return Math.round(100*Math.max(0,1-avg/typ)); };
-  const modeCode=(arr)=>{ const m=new Map(); let best=null,bn=0; for(const v of arr){ const n=(m.get(v)||0)+1; m.set(v,n); if(n>bn){bn=n;best=v;} } return best; };
-  for(const d of days){
-    const b=byDay.get(d); const tMin=b.t.length?Math.min(...b.t).toFixed(1):'–'; const tMax=b.t.length?Math.max(...b.t).toFixed(1):'–';
-    const rain24=b.r.reduce((a,c)=>a+(c||0),0); const windAvg=b.w.length?(b.w.reduce((a,c)=>a+c,0)/b.w.length).toFixed(1):'–';
-    const vals=[confFromBands(b.bt),confFromBands(b.br),confFromBands(b.bw)].filter(v=>v!=null); const confStr=vals.length?Math.round(vals.reduce((a,c)=>a+c,0)/vals.length)+'%':'–';
-    let code=modeCode(b.codes); if(rain24>=50) code=65; else if(rain24>=10 && (code==null||[0,1,2,3].includes(code))) code=61;
-    const dateStr=new Date(d).toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'});
-    const label=codeToLabelVi(code); const iconHTML=codeToIconHTML(code);
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${dateStr}</td>
-      <td class="wx center">${iconHTML}<span>${label}</span></td>
-      <td>${tMin} / ${tMax}</td><td>${rain24.toFixed(1)}</td><td>${windAvg}</td><td>${confStr}</td>`;
-    tbody.appendChild(tr);
-  }
+  const list=document.getElementById('dailyList'); list.innerHTML='';
+  if(!days.length){ list.innerHTML='<div class="meta" style="padding:10px">Chưa có dữ liệu.</div>'; return; }
+
+  let gMin=Infinity, gMax=-Infinity;
+  const rows=days.map(d=>{
+    const b=byDay.get(d);
+    const tMin=b.t.length?Math.min(...b.t):null;
+    const tMax=b.t.length?Math.max(...b.t):null;
+    const tAvg=b.t.length?(b.t.reduce((a,c)=>a+c,0)/b.t.length):null;
+    const wet=b.r.filter(x=>(x||0)>0.2).length; const pop=b.r.length?Math.round(100*wet/b.r.length):0;
+    const mm=new Map(); let code=null,bn=0; b.codes.forEach(v=>{const n=(mm.get(v)||0)+1; mm.set(v,n); if(n>bn){bn=n;code=v;}});
+    if(tMin!=null) gMin=Math.min(gMin,tMin); if(tMax!=null) gMax=Math.max(gMax,tMax);
+    return {d,tMin,tMax,tAvg,pop,code};
+  });
+  const span=Math.max(1e-6,gMax-gMin);
+  const todaySO=startOfLocalDay(Date.now());
+
+  rows.forEach(r=>{
+    const isToday=r.d===todaySO;
+    const dayLabel=isToday?'Hôm nay':new Date(r.d).toLocaleDateString('vi-VN',{weekday:'short'});
+    const left = r.tMin!=null ? (r.tMin-gMin)/span : .25;
+    const right= r.tMax!=null ? (r.tMax-gMin)/span : .75;
+    const mid  = r.tAvg!=null ? (r.tAvg-gMin)/span : (left+right)/2;
+
+    const iconHTML=codeToIconHTML(r.code);
+    const tMinStr=r.tMin!=null?Math.round(r.tMin)+'°':'–';
+    const tMaxStr=r.tMax!=null?Math.round(r.tMax)+'°':'–';
+
+    const el=document.createElement('div');
+    el.className='day-row'+(isToday?' today':'');
+    el.innerHTML=`
+      <div class="day-name">${dayLabel}</div>
+      <div class="wx-stack">
+        ${iconHTML}
+        <div class="pop">${r.pop}%</div>
+      </div>
+      <div class="temp-min">${tMinStr}</div>
+      <div class="range">
+        <div class="track"></div>
+        <div class="fill" style="left:${(left*100).toFixed(2)}%; width:${((right-left)*100).toFixed(2)}%"></div>
+        <div class="dot" style="left:calc(${(mid*100).toFixed(2)}% - 7px)"></div>
+      </div>
+      <div class="temp-max">${tMaxStr}</div>`;
+    list.appendChild(el);
+  });
 }
 
 /* Update forecast */
@@ -788,7 +763,6 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   document.getElementById('pane-daily').classList.toggle('active', t.dataset.tab==='daily');
 }));
 (function(){ 
-  // vị trí mặc định Hà Nội
   const lat=21.028,lon=105.854; 
   L.marker([lat,lon]).addTo(map).bindPopup('Nhấn vào bản đồ để chọn vị trí khác.').openPopup();
   document.getElementById('locTag').textContent=`Vị trí: ${lat.toFixed(3)}, ${lon.toFixed(3)}`; 
