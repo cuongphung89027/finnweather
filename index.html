@@ -54,8 +54,12 @@
   }
   .hdr-ic{display:inline-flex; width:18px; height:18px; opacity:.9}
 
-  header{padding:18px 20px;border-bottom:1px solid var(--stroke);
-    background:linear-gradient(180deg, rgba(122,255,222,.25), rgba(255,255,255,0))}
+  /* ===== Header (fixed theme switch inside) ===== */
+  header{
+    padding:18px 20px;border-bottom:1px solid var(--stroke);
+    background:linear-gradient(180deg, rgba(122,255,222,.25), rgba(255,255,255,0));
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.12);
     background:
@@ -65,6 +69,7 @@
     backdrop-filter: blur(8px) saturate(160%)}
   h1{font-size:20px;line-height:1.2;margin:0}
   .sub{color:var(--muted);font-size:13px}
+  .hdr-actions{display:flex; align-items:center; gap:12px}
 
   #app{display:grid;grid-template-columns:1fr 460px;gap:16px;padding:16px}
   @media (max-width:1100px){#app{grid-template-columns:1fr}}
@@ -220,9 +225,9 @@
   @keyframes dots { 0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."} 100%{content:""} }
   #splash.hide{opacity:0; pointer-events:none;}
 
-  /* ===== Theme switch (no emoji) ===== */
+  /* ===== Theme switch (now inside header, not fixed) ===== */
   #themeSwitch{
-    position:fixed; top:14px; right:14px; z-index:10000;
+    position:static; z-index:auto;
     display:flex; align-items:center; gap:8px; padding:6px 10px;
     border-radius:999px; border:1px solid var(--stroke);
     background:linear-gradient(180deg, var(--bg1), var(--bg2));
@@ -284,23 +289,14 @@
 
   /* tối ưu rất nhỏ cho màn hình hẹp */
   @media (max-width: 520px){
+    header{ flex-direction:column; align-items:flex-start; }
+    .hdr-actions{ width:100%; display:flex; justify-content:flex-end; }
     #dailyTable{ min-width: 540px; }
     .wx span{ font-size: .98em; }
   }
 </style>
 </head>
 <body>
-
-<!-- Theme switch (no emoji) -->
-<div id="themeSwitch" class="glass">
-  <span class="meta">Sáng</span>
-  <label class="tgl">
-    <input type="checkbox" id="modeToggle" />
-    <span class="track"></span>
-    <span class="thumb"></span>
-  </label>
-  <span class="meta">Tối</span>
-</div>
 
 <!-- Splash Overlay -->
 <div id="splash" class="glass">
@@ -314,6 +310,19 @@
     <div>
       <h1>FinnWeather+</h1>
       <div class="sub">Dự báo thời tiết đa mô hình</div>
+    </div>
+  </div>
+
+  <div class="hdr-actions">
+    <!-- Theme switch (no emoji) — now inside header -->
+    <div id="themeSwitch" class="glass">
+      <span class="meta">Sáng</span>
+      <label class="tgl">
+        <input type="checkbox" id="modeToggle" />
+        <span class="track"></span>
+        <span class="thumb"></span>
+      </label>
+      <span class="meta">Tối</span>
     </div>
   </div>
 </header>
@@ -335,7 +344,7 @@
         <label for="satToggle" class="meta" style="display:flex;align-items:center;gap:6px"><i data-feather="image" class="fi"></i> Himawari IR (NASA GIBS)</label>
         <input type="checkbox" id="radarToggle" />
         <label for="radarToggle" class="meta" style="display:flex;align-items:center;gap:6px"><i data-feather="activity" class="fi"></i> Radar mưa (RainViewer)</label>
-        <button class="btn" id="radarPlay" disabled><span class="fi"><i data-feather="play"></i></span> Phát/Ngừng radar</button>
+        <button class="btn" id="radarPlay" disabled><span class="fi"><i data-feather="play"></i></span> Phát radar</button>
         <span class="chip" id="radarStatus">Radar: tắt</span>
         <span class="chip" id="radarTime">–</span>
       </div>
@@ -464,16 +473,27 @@ function gibsLayer({layer='Himawari_AHI_Band13_Clean_Infrared_Day', time='defaul
 }
 let satLayer = gibsLayer({}); satLayer.addTo(map);
 
-/* =============== Theme Toggle =============== */
+/* =============== Theme Toggle (now respects initial data-theme) =============== */
 const html = document.documentElement;
 const modeToggle = document.getElementById('modeToggle');
+
 function setTheme(mode){
   html.setAttribute('data-theme', mode);
-  if(mode==='dark'){ if(map.hasLayer(lightBase)){ map.removeLayer(lightBase); } if(!map.hasLayer(darkBase)) darkBase.addTo(map); }
-  else{ if(map.hasLayer(darkBase)){ map.removeLayer(darkBase); } if(!map.hasLayer(lightBase)) lightBase.addTo(map); }
+  if(mode==='dark'){
+    if(map.hasLayer(lightBase)) map.removeLayer(lightBase);
+    if(!map.hasLayer(darkBase)) darkBase.addTo(map);
+  }else{
+    if(map.hasLayer(darkBase)) map.removeLayer(darkBase);
+    if(!map.hasLayer(lightBase)) lightBase.addTo(map);
+  }
+  if(modeToggle) modeToggle.checked = (mode === 'dark');
 }
+
+// set initial from <html data-theme="...">
+const initialMode = html.getAttribute('data-theme') || 'light';
+setTheme(initialMode);
+
 modeToggle.addEventListener('change',()=> setTheme(modeToggle.checked?'dark':'light'));
-setTheme('light'); // default
 
 /* =============== Radar (RainViewer) =============== */
 let radarFrames = [], radarLayers = [], radarFrame = 0, radarPlaying = false;
