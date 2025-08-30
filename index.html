@@ -9,7 +9,6 @@
 <script src="https://unpkg.com/feather-icons"></script>
 
 <style>
-  /* ==================== THEME VARIABLES ==================== */
   :root{
     --bg0:#f5f8ff; --bg1:rgba(255,255,255,.65); --bg2:rgba(255,255,255,.45);
     --stroke:rgba(0,0,0,.08); --stroke-2:rgba(0,0,0,.12);
@@ -53,7 +52,7 @@
   }
   .hdr-ic{display:inline-flex; width:18px; height:18px; opacity:.9}
 
-  /* ===== Header (switch nằm trong header) ===== */
+  /* ===== Header (theme switch nằm trong header) ===== */
   header{
     padding:18px 20px;border-bottom:1px solid var(--stroke);
     background:linear-gradient(180deg, rgba(122,255,222,.25), rgba(255,255,255,0));
@@ -94,7 +93,7 @@
 
   .switch input{transform:scale(1.05); accent-color:#3d8bff}
 
-  /* ===== Map as TINT GLASS ===== */
+  /* ===== Map ===== */
   #mapWrap{position:relative; border-radius:12px; overflow:hidden; border:1px solid var(--stroke);
     background:linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.2));
     box-shadow:inset 0 .8px 0 rgba(255,255,255,.85), inset 0 -1.2px 0 rgba(10,20,40,.08)}
@@ -160,23 +159,14 @@
   [data-theme="dark"] .tick{background:linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.03)); color:#d6e4ff}
   [data-theme="dark"] .tick.future{border-color:rgba(120,160,255,.6); color:#cfe1ff}
 
-  /* ===== Forecast model chips ===== */
+  /* ===== Forecast models ===== */
   .models{display:flex;flex-wrap:wrap;gap:8px}
   .model{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:12px;
     background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.25));
     border:1px solid var(--stroke); box-shadow:inset 0 1px 0 rgba(255,255,255,.85)}
   [data-theme="dark"] .model{background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03))}
 
-  /* ===== Liquid icons ===== */
-  .liquid-icon{display:inline-flex;align-items:center;justify-content:center;
-    width:28px;height:28px;border-radius:10px; border:1px solid rgba(10,20,40,.12);
-    background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.25));
-    box-shadow:0 6px 16px rgba(90,162,255,.18), inset 0 1px 0 rgba(255,255,255,.85);
-    backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%)}
-  [data-theme="dark"] .liquid-icon{ border-color:rgba(255,255,255,.35); background:linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.06)); box-shadow:0 6px 16px rgba(90,162,255,.20), inset 0 1px 0 rgba(255,255,255,.5)}
-  .liquid-icon svg{display:block}
-
-  /* ===== iOS-like 5-day list ===== */
+  /* ===== Daily iOS-like ===== */
   .daily-list{
     display:flex; flex-direction:column; gap:6px;
     padding:6px 8px;
@@ -218,7 +208,7 @@
   }
   [data-theme="dark"] .range .dot{ background:#eaf1ff; box-shadow:0 0 0 2px rgba(10,15,30,.6); }
 
-  /* ===== Splash overlay ===== */
+  /* Splash */
   #splash{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px;
     color:#0c1322; text-align:center; z-index:9999; transition:opacity .35s ease;
     background:
@@ -247,14 +237,13 @@
   .dots::after{content:""; display:inline-block; width:1.5em; text-align:left; animation:dots 1.2s steps(4,end) infinite}
   @keyframes dots { 0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."} 100%{content:""} }
 
-  /* nhỏ gọn di động */
   @media (max-width: 520px){
     header{ flex-direction:column; align-items:flex-start; }
     .hdr-actions{ width:100%; display:flex; justify-content:flex-end; }
     .day-row{ grid-template-columns: 74px 46px 30px 1fr 34px; gap:8px; }
   }
 
-  /* ===== Theme switch (trong header) ===== */
+  /* Theme switch in header */
   #themeSwitch{
     position:static; z-index:auto;
     display:flex; align-items:center; gap:8px; padding:6px 10px;
@@ -326,7 +315,7 @@
         <label for="satToggle" class="meta" style="display:flex;align-items:center;gap:6px"><i data-feather="image" class="fi"></i> Himawari IR (NASA GIBS)</label>
         <input type="checkbox" id="radarToggle" />
         <label for="radarToggle" class="meta" style="display:flex;align-items:center;gap:6px"><i data-feather="activity" class="fi"></i> Radar mưa (RainViewer)</label>
-        <button class="btn" id="radarPlay" disabled><span class="fi"><i data-feather="play"></i></span> Phát/Ngừng radar</button>
+        <button class="btn" id="radarPlay" disabled><span class="fi"><i data-feather="play"></i></span> Phát radar</button>
         <span class="chip" id="radarStatus">Radar: tắt</span>
         <span class="chip" id="radarTime">–</span>
       </div>
@@ -405,9 +394,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 <script>
-/* =============== Splash control =============== */
+/* Splash */
 window.addEventListener('load', ()=>{ setTimeout(()=> document.getElementById('splash').classList.add('hide'), 2000); });
-
 function refreshFeather(){ try{ feather.replace(); }catch(_){} }
 refreshFeather();
 
@@ -416,6 +404,7 @@ window.addEventListener('error', e => console.warn('GlobalError:', e.message));
 const safeJSON = async (res) => { try { return await res.json(); } catch { return {}; } };
 const toMs = (t) => (typeof t === 'string') ? new Date(t).getTime() : t;
 const HOUR = 3600 * 1000; const hourBin = (ms) => Math.floor(ms / HOUR);
+const clamp = (v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 
 /* Map */
 const map = L.map('map', { zoomControl:true }).setView([16.0,106.0], 6);
@@ -687,7 +676,7 @@ function render(blend){
   renderDaily(blend);
 }
 
-/* Daily iOS-like */
+/* ===== Daily (iOS-like) with dot only for today ===== */
 function startOfLocalDay(ms){ const d=new Date(ms); return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(); }
 function renderDaily(blend){
   const byDay=new Map();
@@ -708,21 +697,37 @@ function renderDaily(blend){
     const b=byDay.get(d);
     const tMin=b.t.length?Math.min(...b.t):null;
     const tMax=b.t.length?Math.max(...b.t):null;
-    const tAvg=b.t.length?(b.t.reduce((a,c)=>a+c,0)/b.t.length):null;
     const wet=b.r.filter(x=>(x||0)>0.2).length; const pop=b.r.length?Math.round(100*wet/b.r.length):0;
     const mm=new Map(); let code=null,bn=0; b.codes.forEach(v=>{const n=(mm.get(v)||0)+1; mm.set(v,n); if(n>bn){bn=n;code=v;}});
     if(tMin!=null) gMin=Math.min(gMin,tMin); if(tMax!=null) gMax=Math.max(gMax,tMax);
-    return {d,tMin,tMax,tAvg,pop,code};
+    return {d,tMin,tMax,pop,code};
   });
   const span=Math.max(1e-6,gMax-gMin);
-  const todaySO=startOfLocalDay(Date.now());
+
+  const now=Date.now(); const todaySO=startOfLocalDay(now);
+  // Lấy nhiệt độ hiện tại gần nhất trong hôm nay từ chuỗi giờ
+  let curTemp=null, best=Infinity;
+  for(let i=0;i<blend.time.length;i++){
+    if(startOfLocalDay(blend.time[i])!==todaySO) continue;
+    const v=blend.avg.temp[i];
+    if(v==null) continue;
+    const df=Math.abs(blend.time[i]-now);
+    if(df<best){ best=df; curTemp=v; }
+  }
 
   rows.forEach(r=>{
     const isToday=r.d===todaySO;
     const dayLabel=isToday?'Hôm nay':new Date(r.d).toLocaleDateString('vi-VN',{weekday:'short'});
     const left = r.tMin!=null ? (r.tMin-gMin)/span : .25;
     const right= r.tMax!=null ? (r.tMax-gMin)/span : .75;
-    const mid  = r.tAvg!=null ? (r.tAvg-gMin)/span : (left+right)/2;
+
+    // Chỉ tạo dot cho Hôm nay; dùng nhiệt độ hiện tại thay vì trung bình
+    let dotHTML='';
+    if(isToday && curTemp!=null){
+      const p = clamp((curTemp-gMin)/span, 0, 1);
+      const pos = clamp(p, left, right);     // đảm bảo nằm trong thanh
+      dotHTML = `<div class="dot" style="left:calc(${(pos*100).toFixed(2)}% - 7px)"></div>`;
+    }
 
     const iconHTML=codeToIconHTML(r.code);
     const tMinStr=r.tMin!=null?Math.round(r.tMin)+'°':'–';
@@ -740,7 +745,7 @@ function renderDaily(blend){
       <div class="range">
         <div class="track"></div>
         <div class="fill" style="left:${(left*100).toFixed(2)}%; width:${((right-left)*100).toFixed(2)}%"></div>
-        <div class="dot" style="left:calc(${(mid*100).toFixed(2)}% - 7px)"></div>
+        ${dotHTML}
       </div>
       <div class="temp-max">${tMaxStr}</div>`;
     list.appendChild(el);
