@@ -56,18 +56,18 @@
   header{
     padding:18px 20px;border-bottom:1px solid var(--stroke);
     background:linear-gradient(180deg, rgba(122,255,222,.25), rgba(255,255,255,0));
-    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:nowrap;
   }
-  .brand{display:flex;align-items:center;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px; min-width:0;}
   .logo{width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.12);
     background:
       radial-gradient(100% 100% at 0% 0%, #7affde 0, transparent 55%),
       radial-gradient(100% 100% at 100% 100%, #5aa2ff 0, transparent 55%),
       rgba(255,255,255,.7); box-shadow:0 10px 30px rgba(105,160,255,.22);
     backdrop-filter: blur(8px) saturate(160%)}
-  h1{font-size:20px;line-height:1.2;margin:0}
-  .sub{color:var(--muted);font-size:13px}
-  .hdr-actions{display:flex; align-items:center; gap:12px}
+  h1{font-size:20px;line-height:1.2;margin:0; white-space:nowrap}
+  .sub{color:var(--muted);font-size:13px; white-space:nowrap}
+  .hdr-actions{display:flex; align-items:center; gap:12px; flex:0 0 auto}
 
   #app{display:grid;grid-template-columns:1fr 460px;gap:16px;padding:16px}
   @media (max-width:1100px){#app{grid-template-columns:1fr}}
@@ -237,9 +237,16 @@
   .dots::after{content:""; display:inline-block; width:1.5em; text-align:left; animation:dots 1.2s steps(4,end) infinite}
   @keyframes dots { 0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."} 100%{content:""} }
 
+  /* ====== Mobile tweaks: giữ header 1 dòng ====== */
   @media (max-width: 520px){
-    header{ flex-direction:column; align-items:flex-start; }
-    .hdr-actions{ width:100%; display:flex; justify-content:flex-end; }
+    header{ gap:8px; flex-wrap:nowrap; }
+    .brand{ gap:8px; }
+    .logo{ width:30px; height:30px; border-radius:9px; }
+    h1{ font-size:18px; }
+    .sub{ font-size:11px; }
+    .hdr-actions{ width:auto; }
+    #themeSwitch{ padding:4px 8px; transform:scale(.9); transform-origin:right center; }
+    #themeSwitch .meta{ font-size:11px; }
     .day-row{ grid-template-columns: 74px 46px 30px 1fr 34px; gap:8px; }
   }
 
@@ -460,7 +467,7 @@ function showRadarFrame(i){
 }
 function tickRadar(){ if(!radarPlaying) return; showRadarFrame((radarFrame+1)%radarLayers.length); setTimeout(tickRadar,800); }
 function playRadar(){ if(!radarLayers.length) return; radarPlaying=!radarPlaying;
-  document.getElementById('radarPlay').innerHTML = radarPlaying ? `<span class="fi"><i data-feather="pause"></i></span> Tạm dừng` : `<span class="fi"><i data-feather="play"></i></span> Phát/Ngừng radar`;
+  document.getElementById('radarPlay').innerHTML = radarPlaying ? `<span class="fi"><i data-feather="pause"></i></span> Tạm dừng` : `<span class="fi"><i data-feather="play"></i></span> Phát radar`;
   refreshFeather();
   if(radarPlaying) tickRadar();
 }
@@ -541,7 +548,7 @@ document.getElementById('tcToggle').addEventListener('change', ()=>{
 
 /* Toggles */
 document.getElementById('satToggle').addEventListener('change', e=> e.target.checked ? satLayer.addTo(map) : map.removeLayer(satLayer));
-document.getElementById('radarToggle').addEventListener('change', ()=>{ if(document.getElementById('radarToggle').checked){ if(radarLayers.length) showRadarFrame(radarLayers.length-1); } else { radarLayers.forEach(l=>map.removeLayer(l)); radarPlaying=false; document.getElementById('radarPlay').innerHTML='<span class="fi"><i data-feather="play"></i></span> Phát/Ngừng radar'; refreshFeather(); } updateRadarStatus(); updateRadarTimeLabel(); });
+document.getElementById('radarToggle').addEventListener('change', ()=>{ if(document.getElementById('radarToggle').checked){ if(radarLayers.length) showRadarFrame(radarLayers.length-1); } else { radarLayers.forEach(l=>map.removeLayer(l)); radarPlaying=false; document.getElementById('radarPlay').innerHTML='<span class="fi"><i data-feather="play"></i></span> Phát radar'; refreshFeather(); } updateRadarStatus(); updateRadarTimeLabel(); });
 document.getElementById('radarPlay').addEventListener('click', playRadar);
 
 /* Geolocation & picking */
@@ -705,7 +712,6 @@ function renderDaily(blend){
   const span=Math.max(1e-6,gMax-gMin);
 
   const now=Date.now(); const todaySO=startOfLocalDay(now);
-  // Lấy nhiệt độ hiện tại gần nhất trong hôm nay từ chuỗi giờ
   let curTemp=null, best=Infinity;
   for(let i=0;i<blend.time.length;i++){
     if(startOfLocalDay(blend.time[i])!==todaySO) continue;
@@ -721,11 +727,10 @@ function renderDaily(blend){
     const left = r.tMin!=null ? (r.tMin-gMin)/span : .25;
     const right= r.tMax!=null ? (r.tMax-gMin)/span : .75;
 
-    // Chỉ tạo dot cho Hôm nay; dùng nhiệt độ hiện tại thay vì trung bình
     let dotHTML='';
     if(isToday && curTemp!=null){
       const p = clamp((curTemp-gMin)/span, 0, 1);
-      const pos = clamp(p, left, right);     // đảm bảo nằm trong thanh
+      const pos = clamp(p, left, right);
       dotHTML = `<div class="dot" style="left:calc(${(pos*100).toFixed(2)}% - 7px)"></div>`;
     }
 
